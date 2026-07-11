@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:5432/hgn_sos
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -11,18 +11,18 @@ spring:
     enabled: true
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
+      host: ${REDIS_HOST}
       port: ${REDIS_PORT:6379}
 
 mqtt:
-  broker-url: ${MQTT_BROKER_URL:tcp://localhost:1883}
-  client-id: hgn-sos-backend
+  broker-url: ${MQTT_BROKER_URL}
+  client-id: ${MQTT_CLIENT_ID}
 
 sos:
-  dedup-ttl-seconds: ${DEDUP_TTL_SECONDS:60}
-  escalation-window-seconds: ${ESCALATION_WINDOW_SECONDS:300}
-  escalation-poll-ms: 30000
-  resolution-grace-days: 1
+  dedup-ttl-seconds: ${DEDUP_TTL_SECONDS}
+  escalation-window-seconds: ${ESCALATION_WINDOW_SECONDS}
+  escalation-poll-ms: ${ESCALATION_POLL_MS}
+  resolution-grace-days: ${RESOLUTION_GRACE_DAYS}
   jwt:
-    secret: ${JWT_SECRET:8f2a1b9c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a}
-    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS}

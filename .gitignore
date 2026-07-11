@@ -36,6 +36,6 @@ build/
 *.log
 *.tmp
 .env
-code.md
-todo.md
 *.md
+!README.md
+!DECISIONS.md
