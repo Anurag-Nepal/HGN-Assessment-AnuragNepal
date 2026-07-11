@@ -18,8 +18,8 @@ The architecture is designed to scale horizontally without changing the core bus
 * **Real-time notifications:** In a multi-instance deployment, a shared messaging mechanism (such as Redis Pub/Sub or Kafka) can synchronize alert broadcasts so operators connected to different backend instances receive identical updates.
 * **Concurrency control:** Alert claiming relies on optimistic conditional updates in the database, ensuring only one operator can successfully claim an alert regardless of how many application instances are running.
 * **Scheduled tasks:** The escalation process should use distributed locking so that only one instance performs periodic escalation checks, preventing duplicate processing.
-
 This event-driven architecture keeps ingestion, processing, persistence, and notification loosely coupled, enabling each component to scale independently as the number of devices, operators, and SOS events increases.
+
 HGN SOS Alert Service: Decisions & Tradeoffs
 ============================================
 
