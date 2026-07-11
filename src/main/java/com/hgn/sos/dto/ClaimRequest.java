@@ -1,3 +1,5 @@
 package com.hgn.sos.dto;
 
-public record ClaimRequest(String coordinatorId) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record ClaimRequest(@NotBlank String coordinatorId) {}

@@ -1,7 +1,6 @@
 package com.hgn.sos.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hgn.sos.dto.MqttSosDto;
 import com.hgn.sos.dto.SosPayload;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.messaging.Message;
@@ -20,8 +19,7 @@ public class SosMqttListener {
 
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public void handle(Message<String> message) throws Exception {
-        MqttSosDto dto = objectMapper.readValue(message.getPayload(), MqttSosDto.class);
-        intakeService.handleIncomingSos(new SosPayload(
-                dto.deviceId(), dto.latitude(), dto.longitude(), dto.timestamp()));
+        SosPayload payload = objectMapper.readValue(message.getPayload(), SosPayload.class);
+        intakeService.handleIncomingSos(payload);
     }
 }

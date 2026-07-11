@@ -3,6 +3,7 @@ package com.hgn.sos.controller;
 import com.hgn.sos.dto.ClaimOutcome;
 import com.hgn.sos.dto.ClaimRequest;
 import com.hgn.sos.service.AlertClaimService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class AlertClaimController {
     }
 
     @PostMapping("/{id}/claim")
-    public ResponseEntity<ClaimOutcome> claim(@PathVariable UUID id, @RequestBody ClaimRequest req) {
+    public ResponseEntity<ClaimOutcome> claim(@PathVariable UUID id, @Valid @RequestBody ClaimRequest req) {
         ClaimOutcome outcome = claimService.claim(id, req.coordinatorId());
         return outcome.success()
                 ? ResponseEntity.ok(outcome)

@@ -5,9 +5,9 @@ import com.hgn.sos.dto.ResolutionResult;
 import com.hgn.sos.dto.SosPayload;
 import com.hgn.sos.model.Alert;
 import com.hgn.sos.model.AlertStatus;
-import com.hgn.sos.model.Incident;
 import com.hgn.sos.repository.AlertRepository;
-import com.hgn.sos.repository.IncidentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,24 +16,23 @@ import java.time.Instant;
 @Service
 public class SosIntakeService {
 
+    private static final Logger log = LoggerFactory.getLogger(SosIntakeService.class);
     private final DedupService dedupService;
     private final ResolutionService resolutionService;
     private final AlertRepository alertRepository;
-    private final IncidentRepository incidentRepository;
     private final AlertPushService pushService;
 
     public SosIntakeService(DedupService dedupService,
-                             ResolutionService resolutionService,
-                             AlertRepository alertRepository,
-                             IncidentRepository incidentRepository,
-                             AlertPushService pushService) {
+                            ResolutionService resolutionService,
+                            AlertRepository alertRepository,
+                            AlertPushService pushService) {
         this.dedupService = dedupService;
         this.resolutionService = resolutionService;
         this.alertRepository = alertRepository;
-        this.incidentRepository = incidentRepository;
         this.pushService = pushService;
     }
 
+    @Transactional
     public IntakeResult handleIncomingSos(SosPayload payload) {
         boolean isNew = dedupService.registerIfNew(
                 payload.deviceId(), payload.deviceTimestamp(),
@@ -49,8 +48,7 @@ public class SosIntakeService {
         return createAlert(payload);
     }
 
-    @Transactional
-    protected IntakeResult createAlert(SosPayload payload) {
+    private IntakeResult createAlert(SosPayload payload) {
         ResolutionResult resolution = resolutionService.resolve(
                 payload.deviceId(), payload.deviceTimestamp());
 
@@ -72,11 +70,12 @@ public class SosIntakeService {
 
         Alert saved = alertRepository.save(alert);
 
-        Incident incident = new Incident();
-        incident.setAlertId(saved.getId());
-        incidentRepository.save(incident);
+        try {
+            pushService.pushNewAlert(saved);
+        } catch (Exception e) {
+            log.warn("Failed to push alert notification", e);
+        }
 
-        pushService.pushNewAlert(saved);
         return IntakeResult.created(saved);
     }
 }

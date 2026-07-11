@@ -6,6 +6,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 
@@ -46,19 +48,31 @@ public class Alert {
     @Column(name = "resolved_via_grace_window")
     private boolean resolvedViaGraceWindow;
 
+    @Column(name = "claimed_by")
+    private String claimedBy;
+
+    @Column(name = "claimed_at")
+    private Instant claimedAt;
+
+    @Column(name = "resolved_at")
+    private Instant resolvedAt;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
     @Version
     private int version;
 
     private Instant createdAt;
     private Instant updatedAt;
 
-    @jakarta.persistence.PrePersist
+    @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
         updatedAt = Instant.now();
     }
 
-    @jakarta.persistence.PreUpdate
+    @PreUpdate
     protected void onUpdate() {
         updatedAt = Instant.now();
     }
@@ -95,6 +109,18 @@ public class Alert {
 
     public boolean isResolvedViaGraceWindow() { return resolvedViaGraceWindow; }
     public void setResolvedViaGraceWindow(boolean resolvedViaGraceWindow) { this.resolvedViaGraceWindow = resolvedViaGraceWindow; }
+
+    public String getClaimedBy() { return claimedBy; }
+    public void setClaimedBy(String claimedBy) { this.claimedBy = claimedBy; }
+
+    public Instant getClaimedAt() { return claimedAt; }
+    public void setClaimedAt(Instant claimedAt) { this.claimedAt = claimedAt; }
+
+    public Instant getResolvedAt() { return resolvedAt; }
+    public void setResolvedAt(Instant resolvedAt) { this.resolvedAt = resolvedAt; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 
     public int getVersion() { return version; }
     public void setVersion(int version) { this.version = version; }

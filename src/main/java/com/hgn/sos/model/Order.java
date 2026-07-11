@@ -2,6 +2,8 @@ package com.hgn.sos.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -29,8 +31,9 @@ public class Order {
     @Column(name = "end_date", nullable = false)
     private Instant endDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
-    private String status;
+    private OrderStatus status;
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -47,6 +50,6 @@ public class Order {
     public Instant getEndDate() { return endDate; }
     public void setEndDate(Instant endDate) { this.endDate = endDate; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
 }
