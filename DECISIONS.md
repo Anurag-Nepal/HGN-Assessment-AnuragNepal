@@ -2,15 +2,18 @@
 
 ## Basic HLD
 
+<img width="1397" height="697" alt="image" src="https://github.com/user-attachments/assets/8514bca6-11a3-4f3b-a3a3-c1ecb730a209" />
+
 ![image-20260710103841970](C:\Users\V I C T U S\AppData\Roaming\Typora\typora-user-images\image-20260710103841970.png)
 
 
 
 This diagram illustrates the high-level SOS ingestion flow. A simulation script acts as a satellite SOS device by publishing an SOS message containing the device ID, coordinates, and timestamp to an MQTT topic (`sos/{deviceId}`). The backend subscribes to this topic and receives the message in real time without polling. After receiving the SOS, the backend processes it according to the business rules—such as deduplication, booking resolution, alert creation, and persistence in PostgreSQL—before making it available to operators. This event-driven approach closely resembles how real-world satellite communication providers deliver SOS events to downstream systems.
 
-## FInal HLD
-
-![image-20260710103823590](C:\Users\V I C T U S\AppData\Roaming\Typora\typora-user-images\image-20260710103823590.png)This diagram illustrates the internal processing pipeline after an SOS message is received from the MQTT broker. The **MQTT Subscriber** listens to the `sos/{deviceId}` topic and forwards each incoming SOS to the processing pipeline. The pipeline first performs **deduplication** using Redis to ignore retransmitted messages, then resolves the associated **active booking, group, and trekkers** using the device ID and SOS timestamp. A new alert is then created and persisted in the database before being published in real time to connected operator dashboards. Operators can claim the alert, where **optimistic concurrency control** ensures only the first successful claim updates the alert while concurrent attempts are rejected. Separately, an **Escalation Service** periodically scans for unclaimed alerts, escalates those exceeding the configured response window, updates their status in the database, and broadcasts the escalation to all connected operators.
+## Final HLD
+<img width="1377" height="493" alt="image" src="https://github.com/user-attachments/assets/f00a902f-bb63-4ee4-8e54-9c108742087b" />
+![image-20260710103823590](C:\Users\V I C T U S\AppData\Roaming\Typora\typora-user-images\image-20260710103823590.png)
+This diagram illustrates the internal processing pipeline after an SOS message is received from the MQTT broker. The **MQTT Subscriber** listens to the `sos/{deviceId}` topic and forwards each incoming SOS to the processing pipeline. The pipeline first performs **deduplication** using Redis to ignore retransmitted messages, then resolves the associated **active booking, group, and trekkers** using the device ID and SOS timestamp. A new alert is then created and persisted in the database before being published in real time to connected operator dashboards. Operators can claim the alert, where **optimistic concurrency control** ensures only the first successful claim updates the alert while concurrent attempts are rejected. Separately, an **Escalation Service** periodically scans for unclaimed alerts, escalates those exceeding the configured response window, updates their status in the database, and broadcasts the escalation to all connected operators.
 
 The architecture is designed to scale horizontally without changing the core business flow.
 
