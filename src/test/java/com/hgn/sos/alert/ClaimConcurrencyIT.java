@@ -1,7 +1,9 @@
 package com.hgn.sos.alert;
 
-import com.hgn.sos.intake.SosIntakeService;
-import com.hgn.sos.intake.SosPayload;
+import com.hgn.sos.dto.ClaimOutcome;
+import com.hgn.sos.dto.SosPayload;
+import com.hgn.sos.service.AlertClaimService;
+import com.hgn.sos.service.SosIntakeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,7 @@ class ClaimConcurrencyIT {
 
     @Test
     void exactlyOneClaimSucceedsUnderConcurrentAttempts() throws Exception {
-        UUID deviceId = UUID.randomUUID(); // seed a matching active order in test setup
+        UUID deviceId = UUID.randomUUID();
         var result = intakeService.handleIncomingSos(
                 new SosPayload(deviceId, 27.7, 85.3, Instant.now()));
         UUID alertId = result.alert().getId();

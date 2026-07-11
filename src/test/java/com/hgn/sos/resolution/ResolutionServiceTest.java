@@ -1,7 +1,9 @@
 package com.hgn.sos.resolution;
 
-import com.hgn.sos.order.Order;
-import com.hgn.sos.order.OrderRepository;
+import com.hgn.sos.dto.ResolutionResult;
+import com.hgn.sos.model.Order;
+import com.hgn.sos.repository.OrderRepository;
+import com.hgn.sos.service.ResolutionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;

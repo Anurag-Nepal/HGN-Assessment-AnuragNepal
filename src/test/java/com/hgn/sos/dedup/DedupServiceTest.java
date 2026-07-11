@@ -1,5 +1,6 @@
 package com.hgn.sos.dedup;
 
+import com.hgn.sos.service.DedupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -39,12 +40,11 @@ class DedupServiceTest {
         UUID device = UUID.randomUUID();
         Instant now = Instant.now();
 
-        // Simulate SETNX behavior: Returns true on first set, false if it already exists
         when(valueOperations.setIfAbsent(anyString(), eq("1"), eq(Duration.ofSeconds(60))))
-                .thenReturn(true)  // First attempt sets the key successfully
-                .thenReturn(false); // Second attempt hits existing key and fails
+                .thenReturn(true)
+                .thenReturn(false);
 
         assertTrue(dedupService.registerIfNew(device, now, 27.7, 85.3));
-        assertFalse(dedupService.registerIfNew(device, now, 27.7, 85.3)); // duplicate
+        assertFalse(dedupService.registerIfNew(device, now, 27.7, 85.3));
     }
 }

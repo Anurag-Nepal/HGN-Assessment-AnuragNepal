@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import paho.mqtt.publish as publish
 
 def main():
-    device_id = sys.argv[1] if len(sys.argv) > 1 else "DEV123"
+    device_id = sys.argv[1] if len(sys.argv) > 1 else "123e4567-e89b-12d3-a456-426614174000"
     broker = sys.argv[2] if len(sys.argv) > 2 else "localhost"
     payload = {
         "deviceId": device_id, "latitude": 27.7172, "longitude": 85.3240,
