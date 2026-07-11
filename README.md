@@ -173,7 +173,7 @@ All configuration is in `src/main/resources/application.yml`. Values can be over
 
 ## Database Schema
 
-**6 tables** (PostgreSQL):
+**9 tables** (PostgreSQL):
 
 | Table | Purpose |
 | --- | --- |
@@ -185,6 +185,7 @@ All configuration is in `src/main/resources/application.yml`. Values can be over
 | `alert` | SOS alerts (core table — includes claim/incident fields) |
 | `app_user` | Login accounts for operator dashboard |
 | `shedlock` | Distributed lock table for schedulers |
+| `flyway_migration_history` | Tracks db Migration History|
 
 **Key indexes:**
 
