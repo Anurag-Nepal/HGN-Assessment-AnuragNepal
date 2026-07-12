@@ -393,17 +393,9 @@ Tests (6 total):
 
 ```bash
 pip install paho-mqtt
-python scripts/publish_sos.py
+cd scripts
+py publish_sos.py
 ```
-
-Optional arguments:
-
-```bash
-python scripts/publish_sos.py <device-uuid> <mqtt-broker-host>
-```
-
-Default device UUID: `123e4567-e89b-12d3-a456-426614174000` (seeded by V2 migration).
-
 ### Using the Mosquitto CLI
 
 ```bash
