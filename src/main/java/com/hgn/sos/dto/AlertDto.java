@@ -18,6 +18,7 @@ public record AlertDto(UUID id,
                        Instant claimedAt,
                        Instant resolvedAt,
                        String notes) {
+    
     public static AlertDto from(Alert a) {
         return new AlertDto(a.getId(),
                 a.getDeviceId(),

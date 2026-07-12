@@ -92,13 +92,21 @@ git clone <repo-url> hgn-sos
 cd hgn-sos
 ```
 
-### 2. Build the Docker image
+### 2. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your credentials if needed.
+
+### 3. Build the Docker image
 
 ```bash
 docker compose build
 ```
 
-### 3. Start all services
+### 4. Start all services
 
 ```bash
 docker compose up -d
@@ -113,7 +121,7 @@ This starts 4 containers:
 | `redis` | 6379 | Dedup cache |
 | `mosquitto` | 1883 | MQTT broker |
 
-### 4. Verify the app is running
+### 5. Verify the app is running
 
 ```bash
 curl http://localhost:8080/api/alerts
@@ -121,7 +129,7 @@ curl http://localhost:8080/api/alerts
 
 If you get a `401 Unauthorized`, the app is running (auth is required).
 
-### 5. Check logs
+### 6. Check logs
 
 ```bash
 docker compose logs -f app
@@ -135,16 +143,25 @@ docker compose logs -f app
 
 Make sure PostgreSQL 16, Redis 7, and Mosquitto 2 are running on localhost with default ports.
 
-### 2. Configure database
+### 2. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your local credentials.
+
+### 3. Configure database
 
 ```sql
 CREATE DATABASE hgn_sos;
 ```
 
-### 3. Build and run
+### 4. Build and run
 
 ```bash
 ./mvnw clean package -DskipTests
+$env:DB_HOST="localhost"; $env:DB_PORT="5432"; $env:DB_NAME="hgn_sos"; $env:DB_USER="postgres"; $env:DB_PASSWORD="postgres"; $env:REDIS_HOST="localhost"; $env:REDIS_PORT="6379"; $env:MQTT_BROKER_URL="tcp://localhost:1883"; $env:MQTT_CLIENT_ID="hgn-sos-backend"; $env:JWT_SECRET="8f2a1b9c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a"; $env:JWT_EXPIRATION_MS="86400000"; $env:DEDUP_TTL_SECONDS="60"; $env:ESCALATION_WINDOW_SECONDS="300"; $env:ESCALATION_POLL_MS="30000"; $env:RESOLUTION_GRACE_DAYS="1"
 java -jar target/hgn-sos-0.0.1-SNAPSHOT.jar
 ```
 
@@ -152,22 +169,22 @@ java -jar target/hgn-sos-0.0.1-SNAPSHOT.jar
 
 ## Configuration
 
-All configuration is in `src/main/resources/application.yml`. Values can be overridden via environment variables:
+All configuration is via environment variables. Create a `.env` file (see `.env.example`) with these values:
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `DB_HOST` | `localhost` | PostgreSQL host |
-| `DB_USER` | `postgres` | DB username |
-| `DB_PASSWORD` | `postgres` | DB password |
-| `REDIS_HOST` | `localhost` | Redis host |
-| `REDIS_PORT` | `6379` | Redis port |
-| `MQTT_BROKER_URL` | `tcp://localhost:1883` | Mosquitto URL |
-| `JWT_SECRET` | *(embedded default)* | 256-bit Base64 secret for signing JWTs |
-| `JWT_EXPIRATION_MS` | `86400000` | Token validity (24h) |
-| `DEDUP_TTL_SECONDS` | `60` | Redis dedup window |
-| `ESCALATION_WINDOW_SECONDS` | `300` | Auto-escalate after N seconds |
-| `ESCALATION_POLL_MS` | `30000` | Escalation job interval |
-| `RESOLUTION_GRACE_DAYS` | `1` | ±N days grace for booking overlap |
+| Variable | Description |
+| --- | --- |
+| `DB_HOST` | PostgreSQL host |
+| `DB_USER` | DB username |
+| `DB_PASSWORD` | DB password |
+| `REDIS_HOST` | Redis host |
+| `REDIS_PORT` | Redis port |
+| `MQTT_BROKER_URL` | Mosquitto URL |
+| `JWT_SECRET` | 256-bit Base64 secret for signing JWTs |
+| `JWT_EXPIRATION_MS` | Token validity in ms |
+| `DEDUP_TTL_SECONDS` | Redis dedup window |
+| `ESCALATION_WINDOW_SECONDS` | Auto-escalate after N seconds |
+| `ESCALATION_POLL_MS` | Escalation job interval |
+| `RESOLUTION_GRACE_DAYS` | ±N days grace for booking overlap |
 
 ---
 
