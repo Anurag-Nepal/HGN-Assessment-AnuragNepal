@@ -89,7 +89,7 @@ The pipeline: **MQTT** → **Dedup** (Redis) → **Booking Resolution** (Postgre
 
 ```bash
 git clone https://github.com/Anurag-Nepal/HGN-Assessment-AnuragNepal.git
-cd HGN_Assessment-AnuragNepal
+cd HGN-Assessment-AnuragNepal
 ```
 
 ### 2. Configure environment
