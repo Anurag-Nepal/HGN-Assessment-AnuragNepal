@@ -99,6 +99,14 @@ HGN SOS Alert Service: Decisions & Tradeoffs
 
 **Tradeoff:** The push happens before the transaction commits, so a connected operator might briefly not see the alert if the commit later fails. In practice this is acceptable — the alert either appears (commit succeeds) or the entire operation is a no-op (commit rolls back). Either state is consistent. 
 
+## Redis/DB Transaction Boundary
+
+**Decision:** Redis dedup (`SETNX`) runs outside the `@Transactional` DB method. Alert persistence is in a separate `@Transactional` public method called via self-injection (`self.persistAlert()`).
+
+**Why:** If `@Transactional` surrounded both the Redis check and the DB write, a failure during alert creation would roll back the DB transaction but leave the Redis `SETNX` key in place. The next retry would see the Redis key, return "duplicate", and the SOS would be silently lost. Keeping Redis outside the DB transaction ensures a failed alert creation doesn't consume the dedup slot — the next retry will attempt a fresh persist.
+
+**Tradeoff:** The two calls are not atomic. If the process crashes between `registerIfNew` (success) and `persistAlert` (not yet called), the dedup key expires after 60s and the SOS is retryable. This is safer than the alternative — a permanent SOS drop.
+
 ## WebSocket
 
 **Decision:** Raw WebSocket (`@EnableWebSocket` + `TextWebSocketHandler`) for realtime push to operator's dashboard.

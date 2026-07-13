@@ -8,6 +8,7 @@ import com.hgn.sos.model.AlertStatus;
 import com.hgn.sos.repository.AlertRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,9 @@ public class SosIntakeService {
     private final AlertRepository alertRepository;
     private final AlertPushService pushService;
 
+    @Autowired
+    private SosIntakeService self;
+
     public SosIntakeService(DedupService dedupService,
                             ResolutionService resolutionService,
                             AlertRepository alertRepository,
@@ -32,7 +36,6 @@ public class SosIntakeService {
         this.pushService = pushService;
     }
 
-    @Transactional
     public IntakeResult handleIncomingSos(SosPayload payload) {
         boolean isNew = dedupService.registerIfNew(
                 payload.deviceId(), payload.deviceTimestamp(),
@@ -45,10 +48,11 @@ public class SosIntakeService {
             return IntakeResult.duplicate(existing);
         }
 
-        return createAlert(payload);
+        return self.persistAlert(payload);
     }
 
-    private IntakeResult createAlert(SosPayload payload) {
+    @Transactional
+    public IntakeResult persistAlert(SosPayload payload) {
         ResolutionResult resolution = resolutionService.resolve(
                 payload.deviceId(), payload.deviceTimestamp());
 
