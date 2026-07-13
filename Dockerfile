@@ -1,4 +1,4 @@
-FROM eclipse-temurin:22-jdk AS build
+FROM eclipse-temurin:17 AS build
 WORKDIR /app
 COPY . .
 RUN chmod +x ./mvnw

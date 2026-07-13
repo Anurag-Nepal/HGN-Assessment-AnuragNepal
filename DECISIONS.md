@@ -86,22 +86,18 @@ HGN SOS Alert Service: Decisions & Tradeoffs
 
 **Proven by** `ClaimConcurrencyIT` (10 threads, exactly 1 succeeds). 
 
-## Event-Driven WebSocket Push
+## WebSocket Push inside Transaction
 
-**Decision:** Push notifications use `ApplicationEventPublisher` + `@TransactionalEventListener(phase = AFTER_COMMIT)` rather than direct service calls inside `@Transactional` methods.
+**Decision:** Push notifications are called directly inside `@Transactional` methods with a try/catch wrapper rather than using `ApplicationEventPublisher` + `@TransactionalEventListener`.
 
-**Why:** If a WebSocket broadcast throws (e.g., serialization error, closed session), the DB transaction should not roll back. Decoupling ensures the alert is persisted regardless of push success. The listener runs only after the transaction commits successfully.
+**Why:** A WebSocket broadcast failure (serialization error, closed session) should not roll back the DB transaction. The try/catch swallows push exceptions so the alert is always persisted regardless of push success. This is simpler than an event system and avoids the complexity of a separate listener component.
 
 **Flow:**
-    @Transactional method → publishEvent(AlertPushEvent)
-                                     │
-                        (transaction commits)
-                                     │
-                                     ▼
-                  @TransactionalEventListener(after commit)
-                                     │
-                                     ▼
-                  AlertPushService.pushNewAlert / pushEscalation / pushClaimUpdate 
+    @Transactional method → persist alert
+                          → try { pushService.pushNewAlert(alert) } catch (Exception e) { log.warn(...) }
+                          → return success (push failure is non-fatal)
+
+**Tradeoff:** The push happens before the transaction commits, so a connected operator might briefly not see the alert if the commit later fails. In practice this is acceptable — the alert either appears (commit succeeds) or the entire operation is a no-op (commit rolls back). Either state is consistent. 
 
 ## WebSocket
 
