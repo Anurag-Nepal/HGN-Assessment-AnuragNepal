@@ -83,13 +83,13 @@ The pipeline: **MQTT** → **Dedup** (Redis) → **Booking Resolution** (Postgre
 
 ---
 
-## Quick Start (Docker)
+## Quick Start (Docker) (Recommended)
 
 ### 1. Clone and build
 
 ```bash
-git clone <repo-url> hgn-sos
-cd hgn-sos
+git clone https://github.com/Anurag-Nepal/HGN-Assessment-AnuragNepal.git
+cd HGN_Assessment-AnuragNepal
 ```
 
 ### 2. Configure environment
@@ -98,7 +98,7 @@ cd hgn-sos
 cp .env.example .env
 ```
 
-Edit `.env` with your credentials if needed.
+Edit `.env` with your credentials.
 
 ### 3. Build the Docker image
 
@@ -137,7 +137,7 @@ docker compose logs -f app
 
 ---
 
-## Running Locally (Without Docker)
+## Running Locally 
 
 ### 1. Start dependencies
 
